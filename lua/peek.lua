@@ -6,7 +6,7 @@ return function()
     return
   end
 
-  local locations = result[1].result
+  local locations = result[2].result
 
   if not locations or vim.tbl_isempty(locations) then
     return
