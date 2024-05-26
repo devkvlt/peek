@@ -6,7 +6,7 @@ return function()
     return
   end
 
-  local locations = result[2].result
+  local locations = result[1].result
 
   if not locations or vim.tbl_isempty(locations) then
     return
@@ -24,15 +24,14 @@ return function()
     row = 1,
     col = 1,
     border = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' },
-    title = ' ' .. vim.fn.expand('<cword>') .. ' ',
+    title = ' ' .. uri:gsub('file://', '') .. ' ',
     title_pos = 'center',
   }
 
   local winid = vim.api.nvim_open_win(bufnr, true, win_opts)
-
-  vim.api.nvim_win_set_option(winid, 'winhl', 'Normal:Normal,FloatBorder:WinSeparator')
+  vim.api.nvim_set_option_value('winhl', 'Normal:Normal,FloatBorder:WinSeparator', { win = winid })
   vim.api.nvim_win_set_cursor(winid, { range.start.line + 1, range.start.character }) -- Set the cursor position in the new window
-  vim.api.nvim_buf_set_option(bufnr, 'modifiable', false)
+  vim.api.nvim_set_option_value('modifiable', false, { buf = bufnr })
   vim.opt_local.signcolumn = 'no'
 
   vim.keymap.set('n', 'q', function()
@@ -40,7 +39,7 @@ return function()
 
     if vim.api.nvim_win_get_config(id).relative ~= '' then
       vim.keymap.set('n', 'q', 'q', { buffer = 0 })
-      vim.api.nvim_buf_set_option(bufnr, 'modifiable', true)
+      vim.api.nvim_set_option_value('modifiable', true, { buf = bufnr })
       vim.api.nvim_win_close(id, false)
     end
   end, { buffer = 0 })
